@@ -28,7 +28,16 @@ const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
   .map((o) => o.trim());
 
 app.use(
-  cors()
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
 );
 
 // Basic rate limiting on write endpoints to prevent form spam
